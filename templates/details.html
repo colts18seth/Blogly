@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<img src="{{ user.image_url }}" class="rounded float-left mr-5">
+{% endblock %}
+
+{% block content %}
+<h1 class="display-3 m-5">{{ user.first_name }} {{ user.last_name }}</h1>
+
+<form class="w-25 d-inline" action="/users/{{ user.id }}/edit">
+    <button class="btn btn-primary">Edit</button>
+</form>
+<form class="w-25 d-inline" action="/users/{{ user.id }}/delete" method="POST">
+    <button class="btn btn-danger">Delete</button>
+</form>
+
+
+<div class="container">
+    {% if posts %}
+    <h1 class="display-4 m-3">Posts</h1>
+    <ul class="list-group list-group-flush">
+        {% for post in user.posts: %}
+        <a href="/posts/{{ post.id }}">
+            <li class="list-group-item">{{ post.title }}</li>
+        </a>
+        {% endfor %}
+    </ul>
+    <form class="w-25 d-inline" action="/users/{{ user.id }}/posts/new">
+        <button class="btn btn-primary mt-3">Add Post</button>
+    </form>
+    {% endif %}
+    <form class="w-25 d-inline" action="/">
+        <button class="btn btn-warning mt-3">Back</button>
+    </form>
+</div>
+{% endblock %}

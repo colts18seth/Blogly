@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<h1 class="display-3 m-5">{{ post.title }}</h1>
+{% endblock %}
+
+{% block content %}
+
+<p>{{ post.content }}</p>
+
+<blockquote>By {{ user.first_name }} {{ user.last_name }}</blockquote>
+
+<form class="w-25 d-inline" action="/users/{{ user.id }}">
+    <button class="btn btn-warning mt-3">Cancel</button>
+</form>
+<form class="w-25 d-inline" action="/posts/{{ post.id }}/edit">
+    <button class="btn btn-primary mt-3">Edit Post</button>
+</form>
+<form class="w-25 d-inline" action="/posts/{{ post.id }}/delete" method="POST">
+    <button class="btn btn-danger mt-3">Delete</button>
+</form>
+
+{% endblock %}
