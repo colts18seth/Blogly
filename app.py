@@ -2,7 +2,7 @@
 
 from flask import Flask, request, redirect, render_template
 from flask_debugtoolbar import DebugToolbarExtension
-from models import db, connect_db, User, Post
+from models import db, connect_db, User, Post, Tag
 from datetime import datetime
 
 app = Flask(__name__)
@@ -13,6 +13,9 @@ app.config['SQLALCHEMY_ECHO'] = True
 connect_db(app)
 db.create_all()
 
+#######################################################################
+#User Routes
+#######################################################################
 @app.route("/")
 def home():
     """redirect to /users"""
@@ -102,6 +105,10 @@ def add_post(user_id):
     else:
         return render_template("new_post.html", user=user)
 
+#######################################################################
+#Post Routes
+#######################################################################
+
 @app.route("/posts/<int:post_id>")
 def show_post(post_id):
     """  show post """
@@ -138,4 +145,39 @@ def delete_post(post_id):
     user_id = post.user_id
     db.session.delete(post)   
     db.session.commit()
+
     return redirect(f"/users/{user_id}")
+
+#######################################################################
+#Tag Routes
+#######################################################################
+
+@app.route("/tags")
+def list_tags():
+    """List tags and show links to tags detail page"""
+    tags = Tag.query.all()
+    return render_template("list_tags.html", tags=tags)
+
+
+@app.route("/tags/<int:tag_id>")
+def show_tag(tag_id):
+    """Show tag detail page"""
+    tag = Tag.query.get_or_404(tag_id)
+
+    return render_template("show_tag.html", tag=tag)
+
+
+@app.route("/tags/new", methods=["GET", "POST"])
+def create_tag():
+    """Create new tag or display form"""
+
+    if request.method == "POST":
+        name = request.form['name']
+
+        tag = Tag(name=name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return redirect("/tags")
+    else:
+        return render_template("new_tag.html")
