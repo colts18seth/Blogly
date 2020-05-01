@@ -85,29 +85,35 @@ def delete(user_id):
     db.session.commit()
     return redirect("/users")
 
+#######################################################################
+#Post Routes
+#######################################################################
 
 @app.route("/users/<int:user_id>/posts/new", methods=["GET", "POST"])
 def add_post(user_id):
     """ add post """
 
     user = User.query.get_or_404(user_id)
+    all_tags = Tag.query.all()
 
     if request.method == "POST":
         title = request.form['title']
         content = request.form['content']
         user_id = user.id
+        tags = request.form.getlist('tags')
 
         post = Post(title=title, content=content, user_id=user_id)
         db.session.add(post)
+        db.session.commit()        
+============================[]
+        for tag in tags:
+            post.tags.append(tag)
         db.session.commit()
-
+============================
         return redirect(f"/users/{user_id}")
     else:
-        return render_template("new_post.html", user=user)
+        return render_template("new_post.html", user=user, all_tags=all_tags)
 
-#######################################################################
-#Post Routes
-#######################################################################
 
 @app.route("/posts/<int:post_id>")
 def show_post(post_id):
@@ -181,3 +187,32 @@ def create_tag():
         return redirect("/tags")
     else:
         return render_template("new_tag.html")
+
+
+@app.route("/tags/<int:tag_id>/edit", methods=["GET", "POST"])
+def edit_tag(tag_id):
+    """Edit tag"""
+
+    tag = Tag.query.get_or_404(tag_id)
+
+    if request.method == "POST":
+        
+        tag.name = request.form['name']
+
+        db.session.add(tag)
+        db.session.commit()
+
+        return redirect("/tags")
+    else:
+        return render_template("edit_tag.html", tag=tag)
+
+
+@app.route("/tags/<int:tag_id>/delete", methods=["POST"])
+def delete_tag(tag_id):
+    """ delete tag """
+
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)   
+    db.session.commit()
+
+    return redirect(f"/tags")
