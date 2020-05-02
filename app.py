@@ -101,15 +101,12 @@ def add_post(user_id):
         content = request.form['content']
         user_id = user.id
         tags = request.form.getlist('tags')
+        tags = Tag.query.filter(Tag.name.in_((tags))).all()
 
-        post = Post(title=title, content=content, user_id=user_id)
+        post = Post(title=title, content=content, user_id=user_id, tags=tags)
         db.session.add(post)
         db.session.commit()        
-============================[]
-        for tag in tags:
-            post.tags.append(tag)
-        db.session.commit()
-============================
+
         return redirect(f"/users/{user_id}")
     else:
         return render_template("new_post.html", user=user, all_tags=all_tags)
@@ -120,9 +117,10 @@ def show_post(post_id):
     """  show post """
 
     post = Post.query.get_or_404(post_id)
-    user= User.query.filter_by(id = post.user_id).one()
+    user = User.query.filter_by(id = post.user_id).one()
+    tags = post.tags
 
-    return render_template("show_post.html", post=post, user=user)
+    return render_template("show_post.html", post=post, user=user, tags=tags)
 
 
 @app.route("/posts/<int:post_id>/edit", methods=["GET", "POST"])
@@ -131,17 +129,21 @@ def edit_post(post_id):
 
     post = Post.query.get_or_404(post_id)
     user = post.user
+    all_tags = Tag.query.all()
 
     if request.method == "POST":
         post.title = request.form['title']
         post.content = request.form['content']
+        tags = request.form.getlist('tags')
+        tags = Tag.query.filter(Tag.name.in_((tags))).all()
+        post.tags = tags
 
         db.session.add(post)
         db.session.commit()
 
         return redirect(f"/users/{post.user_id}")
     else:
-        return render_template("edit_post.html", post=post, user=user)
+        return render_template("edit_post.html", post=post, user=user, all_tags=all_tags)
 
 @app.route("/posts/<int:post_id>/delete", methods=["POST"])
 def delete_post(post_id):
@@ -215,4 +217,4 @@ def delete_tag(tag_id):
     db.session.delete(tag)   
     db.session.commit()
 
-    return redirect(f"/tags")
+    return redirect("/tags")

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<h1 class="display-1 m-5">Tag</h1>
+<h1 class="display-1 m-5">Tags</h1>
 {% endblock %}
 
 {% block content %}
@@ -13,6 +13,10 @@
     {% endfor %}
 </ul>
 <form action="/tags/new">
-    <button class="btn btn-info">Add Tag</button>
+    <button class="btn btn-primary">Add Tag</button>
+    <a href="/users">
+        <button type="button" class="btn btn-warning">Back</button>
+    </a>
 </form>
+
 {% endblock %}

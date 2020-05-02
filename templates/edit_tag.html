@@ -7,10 +7,11 @@
 {% block content %}
 <form method="POST">
     <div class="form-group">
-        <p>Name: <input class="form-control" type="text" name="name"></p>
+        <p>Name: <input class="form-control" type="text" name="name" value="{{ tag.name }}"></p>
     </div>
-    <button class="btn btn-info">Edit</button>
+    <a href="/tags/{{ tag.id }}"><button class="btn btn-warning">Back</button></a>
+    <button class="btn btn-primary">Edit</button>
 </form>
 
-<form action="/tags/{{ tag.id }}"><button class="btn btn-warning mt-3">Back</button></form>
+
 {% endblock %}
